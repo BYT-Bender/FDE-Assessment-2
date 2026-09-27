@@ -1,0 +1,15 @@
+Hi, this is My FlashEats Track A project. I started with the business question: late deliveries are frustrating customers. But before predicting them, we need to know where time is being spent and whether the record supports a decision.
+
+The classroom pack gives us three double modes.
+
+gives us three double modes. SQLite for the order lifecycle. CSV files for customer contacts and dispatch interventions and a paginated local dispatch API. I kept the provided source files in the repo so this can be rerun. The data is controlled teaching datasets so I am careful not to describe the figures as live FlashEats performance.
+
+My main modeling choice was to keep one row per order.
+
+was to keep one row per order. The contacts and interventions are event tables, so joining them row for row would duplicate orders and distort the KPI denominator. I aggregated those event by order first, then joined the summaries. The API pages are saved raw and the retrieved count is checked against the API total.
+
+the API total.
+
+This run read 1603 order rows and the cleaning step retained 1600 unique orders.
+
+1603 order rows and the cleaning step retained 1600 unique orders. The source validation flag duplicates and 37 delivered orders without an actual completion timestamp. There are 1495 complete delivered records for the late rate completion. 56.39 % were later than the promised ETA. Median order to pick up was about 26 minutes and median transit about 47 minutes. Transit is longer median segment in this sample, so it's a responsible place to investigate first. But I don't have segment targets or reliable historical ETA revisions. And I can't say transit caused lete deliveries. The recorded interventions are also not a controlled experiment, so I am not claiming the improved outcomes. The pipeline checks require fields, duplicates missing completion timestamp freshness and dispatch completeness. The mock API gives 500 and a 429 on purpose. Both are retried successfully. The same run date replaces the same output partition. My next step would be to validate timestamp meaning and investigate the missing completions. Then test an operational change with the comparison group.
